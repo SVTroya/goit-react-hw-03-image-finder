@@ -2,7 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { StyledButton } from './Button.styled';
 
-Button.propTypes = {};
+Button.propTypes = {
+  onClickHandler: PropTypes.func,
+};
 
 function Button({ onClickHandler }) {
   return (
