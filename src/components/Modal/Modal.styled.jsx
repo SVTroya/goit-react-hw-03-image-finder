@@ -18,9 +18,9 @@ export const StyledModal = styled.div`
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) scale(1);
+  transform: translate(-50%, -50%);
   padding: 0;
-  width: 80%;
+
   border-radius: 4px;
   overflow: clip;
   background: #FFFFFF;
@@ -48,6 +48,9 @@ export const StyledModal = styled.div`
 
   img {
     object-fit: cover;
+    width: 1200px;
+    height: 800px;
+    max-width: unset;
   }
 `;
 

@@ -6,6 +6,7 @@ import { Searchbar } from './Searchbar/Searchbar';
 import Loader from './Loader/Loader';
 import { fetchImagesWithQuery, IMAGES_PER_PAGE } from '../services/api';
 import Modal from './Modal/Modal';
+import * as bodyScrollLock from "body-scroll-lock"
 
 export class App extends Component {
 
@@ -42,9 +43,11 @@ export class App extends Component {
     if (prevState.modalImg !== this.state.modalImg){
       if (this.state.modalImg) {
         document.addEventListener("keydown", this.handleModalClose);
+        bodyScrollLock.disableBodyScroll(document.body);
       }
       else {
         document.removeEventListener("keydown", this.handleModalClose);
+        bodyScrollLock.enableBodyScroll(document.body);
       }
     }
   }
