@@ -1,7 +1,6 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Backdrop, StyledCloseIcon, StyledModal } from './Modal.styled';
-import * as bodyScrollLock from 'body-scroll-lock';
 
 export class Modal extends Component {
 
