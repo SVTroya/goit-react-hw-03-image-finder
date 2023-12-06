@@ -16,8 +16,8 @@ ImageGallery.propTypes = {
 function ImageGallery({ images, onClick }) {
   return (
     <StyledGalleryList>
-      {images.map(({ id, webformatURL, largeImageURL, tags }) => (
-        <ImageGalleryItem key={id} smallImg={webformatURL} largeImg={largeImageURL} alt={tags} onClick={onClick} />
+      {images.map(({ id, smallImage, largeImage, tags }) => (
+        <ImageGalleryItem key={id} smallImg={smallImage} largeImg={largeImage} alt={tags} onClick={onClick} />
       ))}
     </StyledGalleryList>
   );

@@ -5,8 +5,7 @@ import Button from './Button/Button';
 import { Searchbar } from './Searchbar/Searchbar';
 import Loader from './Loader/Loader';
 import { fetchImagesWithQuery, IMAGES_PER_PAGE } from '../services/api';
-import Modal from './Modal/Modal';
-import * as bodyScrollLock from "body-scroll-lock"
+import { Modal } from './Modal/Modal';
 
 export class App extends Component {
 
@@ -16,17 +15,23 @@ export class App extends Component {
     totalPages: 0,
     page: 1,
     isLoading: false,
+    isModalOpen: false,
     modalImg: null,
   };
 
   async componentDidUpdate(prevProps, prevState, snapshot) {
+    if (prevState.searchQuery !== this.state.searchQuery) {
+      this.setState({ images: []});
+    }
+
     if (prevState.searchQuery !== this.state.searchQuery
       || prevState.page !== this.state.page) {
       try {
-        const data = await fetchImagesWithQuery(this.state.searchQuery, this.state.page);
+        this.setState({ isLoading: true });
+        const data = await fetchImagesWithQuery({ q: this.state.searchQuery, page: this.state.page });
         const totalPages = Math.ceil(data.totalHits / IMAGES_PER_PAGE);
         this.setState(prevState => ({
-          images: [...prevState.images, ...data.hits],
+          images: [...prevState.images, ...data.images],
           totalPages: totalPages,
           isLoading: false,
         }));
@@ -39,52 +44,42 @@ export class App extends Component {
         });
       }
     }
-
-    if (prevState.modalImg !== this.state.modalImg){
-      if (this.state.modalImg) {
-        document.addEventListener("keydown", this.handleModalClose);
-        bodyScrollLock.disableBodyScroll(document.body);
-      }
-      else {
-        document.removeEventListener("keydown", this.handleModalClose);
-        bodyScrollLock.enableBodyScroll(document.body);
-      }
-    }
   }
 
-  handleSearch = (ev) => {
-    ev.preventDefault();
-    const searchQuery = ev.currentTarget.elements.searchQuery.value;
-    this.setState({ searchQuery: searchQuery, images: [], page: 1, isLoading: true });
-    ev.currentTarget.elements.searchQuery.value = '';
+  handleSearch = (searchQuery) => {
+    this.setState({ ...searchQuery, page: 1 });
   };
 
   handleShowMore = () => {
-    this.setState(prevState => ({ page: (prevState.page + 1), isLoading: true }));
+    this.setState(prevState => ({ page: (prevState.page + 1) }));
+  };
+
+  handleToggleModal = () => {
+    this.setState(prevState => ({ isModalOpen: !prevState.isModalOpen }));
   };
 
   handleImageClick = (largeImg, alt) => {
+    this.handleToggleModal()
     this.setState({ modalImg: { src: largeImg, alt: alt } });
-  };
-
-  handleModalClose = ( ev ) => {
-    if (ev.target.nodeName === 'BUTTON'
-      || ev.target.dataset.backdrop
-      || ev.key === "Escape") {
-      this.setState({ modalImg: null });
-    }
-  };
+  }
 
   render() {
+    const { images, page, totalPages, isLoading, isModalOpen, modalImg } = this.state;
     return (
       <StyledContainer>
-        <Searchbar onSubmit={this.handleSearch} />
-        {this.state.images.length > 0 && <ImageGallery images={this.state.images} onClick={this.handleImageClick} />}
-        {(this.state.images.length > 0 && this.state.page < this.state.totalPages) &&
-          <Button onClickHandler={this.handleShowMore} />}
-        <Loader visible={this.state.isLoading} />
-        {this.state.modalImg &&
-          <Modal src={this.state.modalImg.src} alt={this.state.modalImg.alt} onClose={this.handleModalClose} />}
+        <Searchbar handleSearch={this.handleSearch} />
+        {images.length > 0
+          ? <ImageGallery images={images} onClick={this.handleImageClick} />
+          : null}
+        {(images.length > 0 && page < totalPages)
+          ? <Button onClickHandler={this.handleShowMore} />
+          : null}
+        <Loader visible={isLoading} />
+        {isModalOpen
+          ? <Modal onClose={this.handleToggleModal}>
+              <img src={modalImg.src} alt={modalImg.alt} />
+            </Modal>
+          : null}
       </StyledContainer>
     );
   }

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { SearchIcon, StyledHeader, StyledSearchForm } from './Searchbar.styled';
 
-
 export class Searchbar extends Component {
 
   state = {
@@ -19,16 +18,21 @@ export class Searchbar extends Component {
     this.setState({searchQuery: target.value})
   }
 
+  onSubmit = (ev) => {
+    ev.preventDefault();
+    this.props.handleSearch(this.state)
+
+  };
   render() {
     return (
       <StyledHeader>
         <StyledSearchForm
-          onSubmit={(ev) => this.props.onSubmit(ev)}>
+          onSubmit={this.onSubmit}>
           <label htmlFor={this.searchInputId}>Search input</label>
           <input
             id={this.searchInputId}
             value={this.state.searchQuery}
-            onChange={(ev) => this.handleInputChange(ev)}
+            onChange={this.handleInputChange}
             type='text'
             name='searchQuery'
             autoComplete='off'

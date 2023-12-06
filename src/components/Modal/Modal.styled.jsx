@@ -44,6 +44,10 @@ export const StyledModal = styled.div`
     color: #171717;
     background-color: transparent;
     transition: color 250ms ease-in-out;
+
+    &:hover, &:focus {
+      color: #006262;
+    }
   }
 
   img {
@@ -57,12 +61,7 @@ export const StyledModal = styled.div`
 export const StyledCloseIcon = styled(IoMdClose)`
   width: 24px;
   height: 24px;
-  color: #171717;
-  transition: color 250ms ease-in-out;
+  color: currentColor;
   pointer-events: none;
-
-  &:hover, &:focus {
-    color: #006262;
-  }
 `;
 
